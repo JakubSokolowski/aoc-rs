@@ -9,3 +9,5 @@ edition = "2018"
 [dependencies]
 rust-crypto = "^0.2"
 fancy-regex = "0.1.0"
+strip-ansi-escapes = "0.1.0"
+onig = "1"
