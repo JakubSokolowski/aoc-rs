@@ -3,7 +3,7 @@ use std::env;
 mod common;
 mod aoc_2015;
 
-use crate::common::data::read_to_vec;
+use crate::common::data::{read_to_vec, read_to_string};
 
 fn main() {
     let argv: Vec<String> = env::args().collect();
@@ -25,6 +25,7 @@ fn main() {
         (2015, 5) => aoc_2015::day05::run(&read_to_vec(year, day)),
         (2015, 6) => aoc_2015::day06::run(&read_to_vec(year, day)),
         (2015, 7) => aoc_2015::day07::run(&read_to_vec(year, day)),
+        (2015, 8) => aoc_2015::day08::run(&read_to_string(year, day)),
 
         (_, _) => panic!("Not implemented"),
     }
