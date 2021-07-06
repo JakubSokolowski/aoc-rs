@@ -52,7 +52,6 @@ fn valid_password(input: &str) -> bool {
 }
 
 
-// for part to, fix false positive : hxbyyzaa
 fn has_incrementing_triplet(input: &str) -> bool {
     input.chars()
         .collect::<Vec<char>>()
@@ -76,8 +75,8 @@ fn no_forbidden_letters(input: &str) -> bool {
 }
 
 fn is_triplet(input: String) -> bool {
-    next_in_alphabet(input.chars().nth(0).unwrap()) == input.chars().nth(1).unwrap()
-        && next_in_alphabet(input.chars().nth(1).unwrap()) == input.chars().nth(2).unwrap()
+    input.chars().nth(0).unwrap() as u32 + 1 ==  input.chars().nth(1).unwrap() as u32
+        && input.chars().nth(1).unwrap() as u32 + 1 == input.chars().nth(2).unwrap() as u32
 }
 
 
