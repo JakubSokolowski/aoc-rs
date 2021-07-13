@@ -29,6 +29,7 @@ fn main() {
         (2015, 9) => aoc_2015::day09::run(&read_to_vec(year, day)),
         (2015, 10) => aoc_2015::day10::run("1113222113"),
         (2015, 11) => aoc_2015::day11::run("hxbxxyzz"),
+        (2015, 12) => aoc_2015::day12::run(&read_to_string(year, day)),
 
         (_, _) => panic!("Not implemented"),
     }
