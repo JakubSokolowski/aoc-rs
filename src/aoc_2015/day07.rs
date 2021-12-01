@@ -1,27 +1,13 @@
 use std::collections::{HashMap, HashSet};
 use std::iter::FromIterator;
 
-pub fn run(input: &Vec<String>) {
+pub fn run(input: &[String]) {
     let mut solver = SignalSolver::new();
     solver.solve(input, "a")
 }
 
-
-pub fn parse_gate(line: &String) {
-    let separator = "->";
-    let tokens: Vec<&str> = line
-        .trim()
-        .split(separator)
-        .collect();
-
-    let input = &tokens[0];
-    let output = &tokens[1];
-    println!("{} {}", input, output)
-}
-
-
 struct SignalSolver {
-    lookup: HashMap<String, u16>
+    lookup: HashMap<String, u16>,
 }
 
 impl SignalSolver {
@@ -31,7 +17,7 @@ impl SignalSolver {
         SignalSolver { lookup }
     }
 
-    pub fn solve(&mut self, input: &Vec<String>, unknown: &str) {
+    pub fn solve(&mut self, input: &[String], unknown: &str) {
         let mut unsolved: HashSet<&String> = HashSet::from_iter(input.iter());
 
         println!("{:?}", unsolved);
@@ -43,23 +29,17 @@ impl SignalSolver {
 
             for line in &unsolved {
                 let separator = "->";
-                let tokens: Vec<&str> = line
-                    .trim()
-                    .split(separator)
-                    .collect();
+                let tokens: Vec<&str> = line.trim().split(separator).collect();
 
                 let input = tokens[0];
                 let output_signal = tokens[1].trim();
 
                 let result = self.eval(input);
 
-                match result {
-                    Some(r) => {
-                        println!("Solved {}={}", output_signal, r);
-                        self.lookup.insert(output_signal.to_string(), r);
-                        to_remove.push(line);
-                    }
-                    _ => {}
+                if let Some(r) = result {
+                    println!("Solved {}={}", output_signal, r);
+                    self.lookup.insert(output_signal.to_string(), r);
+                    to_remove.push(line);
                 }
             }
 
@@ -67,28 +47,21 @@ impl SignalSolver {
                 unsolved.remove(el);
             }
 
-
-            match self.lookup.get(unknown) {
-                Some(s) => {
-                    println!("Found solution! {} = {}", unknown, s);
-                    break;
-                }
-                _ => {}
+            if let Some(s) = self.lookup.get(unknown) {
+                println!("Found solution! {} = {}", unknown, s);
+                break;
             }
         }
     }
 
     pub fn eval(&self, input: &str) -> Option<u16> {
-        let tokens: Vec<&str> = input.
-            trim()
-            .split(' ')
-            .collect();
+        let tokens: Vec<&str> = input.trim().split(' ').collect();
 
         return match tokens.len() {
             3 => self.eval_double(tokens[0].trim(), tokens[1].trim(), tokens[2].trim()),
             2 => self.eval_single(tokens[1].trim(), tokens[0].trim()),
             1 => self.eval_direct(tokens[0].trim()),
-            _ => panic!("Cannot eval input: {}", input)
+            _ => panic!("Cannot eval input: {}", input),
         };
     }
 
@@ -104,18 +77,12 @@ impl SignalSolver {
 
     fn eval_single(&self, x: &str, op: &str) -> Option<u16> {
         let x_val = self.eval_direct(x);
-
-        match x_val {
-            Some(x) => Some(single_op_bitwise(op, x)),
-            None => None
-        }
+        x_val.map(|x| single_op_bitwise(op, x))
     }
 
     fn eval_direct(&self, x: &str) -> Option<u16> {
         return match x.parse::<u16>() {
-            Ok(n) => {
-                Some(n)
-            }
+            Ok(n) => Some(n),
             Err(_e) => {
                 return self.lookup.get(x).cloned();
             }
@@ -123,20 +90,19 @@ impl SignalSolver {
     }
 }
 
-
 pub fn double_op_bitwise(op: &str, op1: u16, op2: u16) -> u16 {
     return match op {
         "AND" => op1 & op2,
         "OR" => op1 | op2,
         "RSHIFT" => op1 >> op2,
         "LSHIFT" => op1 << op2,
-        _ => panic!("Invalid operation: {}", op)
+        _ => panic!("Invalid operation: {}", op),
     };
 }
 
 pub fn single_op_bitwise(op: &str, op1: u16) -> u16 {
     return match op {
         "NOT" => !op1,
-        _ => panic!("Invalid operation: {}", op)
+        _ => panic!("Invalid operation: {}", op),
     };
 }

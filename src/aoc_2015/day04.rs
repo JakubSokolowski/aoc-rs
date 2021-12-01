@@ -1,8 +1,5 @@
-
-
-
-use crypto::md5::Md5;
 use crypto::digest::Digest;
+use crypto::md5::Md5;
 
 pub fn run(input: &str) {
     let part1 = solve(input.as_bytes(), 5);

@@ -1,16 +1,15 @@
 use std::env;
 
-mod common;
 mod aoc_2015;
+mod common;
 
-use crate::common::data::{read_to_vec, read_to_string};
+use crate::common::data::{read_to_string, read_to_vec};
 
 fn main() {
     let argv: Vec<String> = env::args().collect();
     if argv.len() != 3 {
         panic!("Usage: cargo run <year> <day>");
     }
-
 
     let year: u32 = argv[1].parse().expect("Year must be a number");
     let day: u8 = argv[2].parse().expect("Day must be a number");

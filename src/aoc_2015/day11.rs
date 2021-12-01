@@ -11,20 +11,16 @@ pub fn run(input: &str) {
         current = new_pwd.clone();
         println!("Iter: {}. Checking: {}", iter, current);
         iter += 1;
-        match valid_password(current.as_str()) {
-            true => {
-                break
-            }
-            _ => {}
+        if let true = valid_password(current.as_str()) {
+            break;
         }
     }
-
 }
 
 fn next_in_alphabet(c: char) -> char {
     match c {
         'z' => 'a',
-        _ => std::char::from_u32(c as u32 + 1).unwrap_or(c)
+        _ => std::char::from_u32(c as u32 + 1).unwrap_or(c),
     }
 }
 
@@ -51,21 +47,23 @@ fn valid_password(input: &str) -> bool {
     no_forbidden_letters(input) && has_incrementing_triplet(input) && has_different_pairs(input)
 }
 
-
 fn has_incrementing_triplet(input: &str) -> bool {
-    input.chars()
+    input
+        .chars()
         .collect::<Vec<char>>()
         .windows(3)
         .any(|w| is_triplet(w.iter().collect::<String>()))
 }
 
 fn has_different_pairs(input: &str) -> bool {
-    input.chars()
+    input
+        .chars()
         .collect::<Vec<char>>()
         .windows(2)
         .filter(|c| c[0] == c[1])
         .unique()
-        .count() >= 2
+        .count()
+        >= 2
 }
 
 fn no_forbidden_letters(input: &str) -> bool {
@@ -75,14 +73,16 @@ fn no_forbidden_letters(input: &str) -> bool {
 }
 
 fn is_triplet(input: String) -> bool {
-    input.chars().nth(0).unwrap() as u32 + 1 ==  input.chars().nth(1).unwrap() as u32
+    input.chars().next().unwrap() as u32 + 1 == input.chars().nth(1).unwrap() as u32
         && input.chars().nth(1).unwrap() as u32 + 1 == input.chars().nth(2).unwrap() as u32
 }
 
-
 #[cfg(test)]
 mod tests {
-    use crate::aoc_2015::day11::{next_in_alphabet, increment_password, is_triplet, has_incrementing_triplet, has_different_pairs, no_forbidden_letters};
+    use crate::aoc_2015::day11::{
+        has_different_pairs, has_incrementing_triplet, increment_password, is_triplet,
+        next_in_alphabet, no_forbidden_letters,
+    };
 
     #[test]
     fn test_next_in_alphabet_returns_proper_next_letter() {

@@ -6,7 +6,7 @@ pub fn run(input: &str) {
     println!("Sum: {}", sum);
 }
 
-fn sum_nums(s :&str) -> i64 {
+fn sum_nums(s: &str) -> i64 {
     let nums = extract_nums(s);
     nums.iter().sum()
 }

@@ -13,9 +13,8 @@ fn get_floor(input: &str) -> i32 {
     let up_count: i32 = input.matches(up_token).count() as i32;
     let floor: i32 = up_count - down_count;
 
-    return floor
+    floor
 }
-
 
 fn get_basement_position(input: &str) -> i32 {
     let mut current_floor = 0;
@@ -26,7 +25,7 @@ fn get_basement_position(input: &str) -> i32 {
         let change = match c {
             '(' => 1,
             ')' => -1,
-            _ => 0
+            _ => 0,
         };
         current_floor += change;
         position += 1;
@@ -37,5 +36,5 @@ fn get_basement_position(input: &str) -> i32 {
         }
     }
 
-    return position
+    position
 }

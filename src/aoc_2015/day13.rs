@@ -1,10 +1,5 @@
-use std::collections::HashMap;
 use itertools::Itertools;
-
-pub struct Vertex {
-    x: usize,
-    y: usize,
-}
+use std::collections::HashMap;
 
 #[derive(Debug)]
 pub struct Happiness {
@@ -13,11 +8,9 @@ pub struct Happiness {
     delta: i32,
 }
 
-
 pub struct AsymmetricHappinessMatrix {
     name_lookup: HashMap<String, usize>,
     matrix: Vec<Vec<i32>>,
-    distances: Vec<Happiness>,
     cities: Vec<String>,
 }
 
@@ -40,19 +33,17 @@ impl AsymmetricHappinessMatrix {
             matrix[from_idx][to_idx] = distance.delta;
         }
 
-        AsymmetricHappinessMatrix { name_lookup, matrix, distances, cities: guests }
+        AsymmetricHappinessMatrix {
+            name_lookup,
+            matrix,
+            cities: guests,
+        }
     }
 
-    fn uniq_guests(distances: &Vec<Happiness>) -> Vec<String> {
-        let all_froms: Vec<String> = distances
-            .iter()
-            .map(|d| d.from.to_string())
-            .collect();
+    fn uniq_guests(distances: &[Happiness]) -> Vec<String> {
+        let all_froms = distances.iter().map(|d| d.from.to_string());
 
-        let all_tos: Vec<String> = distances
-            .iter()
-            .map(|d| d.to.to_string())
-            .collect();
+        let all_tos = distances.iter().map(|d| d.to.to_string());
 
         all_froms
             .into_iter()
@@ -67,8 +58,8 @@ impl AsymmetricHappinessMatrix {
 
     fn happiness_guests(&self, from: &str, to: &str) -> i32 {
         self.happiness(
-            self.name_lookup.get(from).unwrap().clone(),
-            self.name_lookup.get(to).unwrap().clone(),
+            *self.name_lookup.get(from).unwrap(),
+            *self.name_lookup.get(to).unwrap(),
         )
     }
 
@@ -76,7 +67,7 @@ impl AsymmetricHappinessMatrix {
         let in_line: i32 = cities
             .windows(2)
             .map(|pair| {
-                self.happiness_guests(&pair[0], &pair[1]) +  self.happiness_guests(&pair[1], &pair[0])
+                self.happiness_guests(pair[0], pair[1]) + self.happiness_guests(pair[1], pair[0])
             })
             .sum();
 
@@ -97,21 +88,9 @@ impl AsymmetricHappinessMatrix {
         }
         println!("Longest route: {}", best)
     }
-
-    fn solve_min(&self) {
-        let mut best = i32::MAX;
-        for perm in self.cities.iter().permutations(self.cities.len()).unique() {
-            let v2 = perm.iter().map(|s| s.as_str()).collect();
-            let tour = self.get_seating_delta(v2);
-            if tour < best {
-                best = tour;
-            }
-        }
-        println!("Shortest route: {}", best)
-    }
 }
 
-pub fn run(input: &Vec<String>) {
+pub fn run(input: &[String]) {
     let distances = parse_input(input);
     println!("{:?}", distances);
     let matrix = AsymmetricHappinessMatrix::new(distances);
@@ -120,18 +99,18 @@ pub fn run(input: &Vec<String>) {
     matrix.solve_max();
 }
 
-
-fn parse_input(input: &Vec<String>) -> Vec<Happiness> {
-    input.iter()
+fn parse_input(input: &[String]) -> Vec<Happiness> {
+    input
+        .iter()
         .map(|line| {
-            let tokens: Vec<&str> = line.split(" ").collect();
+            let tokens: Vec<&str> = line.split(' ').collect();
             let from = tokens[0].to_string();
             let to = tokens[10].to_string().replace(".", "");
 
             let multiplier: i32 = match tokens[2] {
                 "gain" => 1,
                 "lose" => -1,
-                _ => panic!("Invalid delta")
+                _ => panic!("Invalid delta"),
             };
             let delta = tokens[3].parse::<i32>().unwrap() * multiplier;
             Happiness { from, to, delta }
