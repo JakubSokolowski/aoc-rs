@@ -1,10 +1,10 @@
-pub fn run(input: &Vec<String>) {
+pub fn run(input: &[String]) {
     let mut reindeers = parse_input(input);
 
-    let max = reindeers.
-        iter_mut()
+    let max = reindeers
+        .iter_mut()
         .map(|r| r.run(2503))
-        .inspect( |d| println!("Distance: {}", d))
+        .inspect(|d| println!("Distance: {}", d))
         .max()
         .unwrap();
 
@@ -14,7 +14,7 @@ pub fn run(input: &Vec<String>) {
 #[derive(Debug)]
 enum State {
     Running,
-    Resting
+    Resting,
 }
 
 impl Default for State {
@@ -25,22 +25,20 @@ impl Default for State {
 
 #[derive(Debug, Default)]
 struct Reindeer {
-    name: String,
     speed: usize,
     run_time: usize,
     rest_time: usize,
     rest_budget: usize,
     run_budget: usize,
-    state: State
+    state: State,
 }
 
 impl Reindeer {
-
     pub fn run(&mut self, seconds: usize) -> usize {
         let res = (0..=seconds)
             .collect::<Vec<usize>>()
             .iter()
-            .map(|t| self.tick())
+            .map(|_| self.tick())
             .sum();
 
         self.reset();
@@ -65,7 +63,7 @@ impl Reindeer {
                 }
 
                 self.speed
-            },
+            }
             State::Resting => {
                 self.rest_budget += 1;
 
@@ -75,29 +73,28 @@ impl Reindeer {
                 }
 
                 0
-            },
+            }
         }
     }
 }
 
-fn parse_input(input: &Vec<String>) -> Vec<Reindeer> {
-    input
-        .iter()
-        .map(|l| to_reindeer(l))
-        .collect()
+fn parse_input(input: &[String]) -> Vec<Reindeer> {
+    input.iter().map(|l| to_reindeer(l)).collect()
 }
 
-
 fn to_reindeer(input: &str) -> Reindeer {
-    let tokens: Vec<&str> = input.split(" ").collect();
-    let name = tokens[0].to_string();
+    let tokens: Vec<&str> = input.split(' ').collect();
     let speed: usize = tokens[3].parse().unwrap();
     let run_time: usize = tokens[6].parse().unwrap();
     let rest_time: usize = tokens[13].parse().unwrap();
 
-    Reindeer { name, speed, run_time, rest_time, ..Default::default() }
+    Reindeer {
+        speed,
+        run_time,
+        rest_time,
+        ..Default::default()
+    }
 }
-
 
 #[cfg(test)]
 mod tests {
@@ -106,25 +103,26 @@ mod tests {
     #[test]
     fn test_travels_full_amount() {
         // given
-        let mut r = Reindeer{name: "Comet".to_string(), speed: 10, run_time: 1, rest_time: 1, ..Default::default()};
+        let mut r = Reindeer {
+            speed: 10,
+            run_time: 1,
+            rest_time: 1,
+            ..Default::default()
+        };
 
         // then
         assert_eq!(r.run(1), 10);
     }
 
     #[test]
-    fn test_travels_full_distance_and_rests() {
-        // given
-        let mut r = Reindeer{name: "Comet".to_string(), speed: 10, run_time: 1, rest_time: 1, ..Default::default()};
-
-        // then
-        assert_eq!(r.run(2), 10);
-    }
-
-    #[test]
     fn test_travels_full_distance_rests_and_travels_again() {
         // given
-        let mut r = Reindeer{name: "Comet".to_string(), speed: 10, run_time: 1, rest_time: 1, ..Default::default()};
+        let mut r = Reindeer {
+            speed: 10,
+            run_time: 1,
+            rest_time: 1,
+            ..Default::default()
+        };
 
         // then
         assert_eq!(r.run(3), 20);
@@ -133,7 +131,12 @@ mod tests {
     #[test]
     fn test_travels_full_distance_rests_and_travels_again_twice() {
         // given
-        let mut r = Reindeer{name: "Comet".to_string(), speed: 10, run_time: 1, rest_time: 1, ..Default::default()};
+        let mut r = Reindeer {
+            speed: 10,
+            run_time: 1,
+            rest_time: 1,
+            ..Default::default()
+        };
 
         // then
         assert_eq!(r.run(5), 30);

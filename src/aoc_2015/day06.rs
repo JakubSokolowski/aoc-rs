@@ -1,10 +1,7 @@
 use std::cmp::{max, min};
 
-pub fn run(input: &Vec<String>) {
-    let cmds: Vec<Command> = input
-        .iter()
-        .map(|line| parse_command(line))
-        .collect();
+pub fn run(input: &[String]) {
+    let cmds: Vec<Command> = input.iter().map(|line| parse_command(line)).collect();
 
     let mut first_grid = BinaryGrid::new(1000, 1000);
     first_grid.apply_commands(&cmds);
@@ -17,7 +14,6 @@ pub fn run(input: &Vec<String>) {
     println!("Got {} brightness", brightness);
 }
 
-
 #[derive(PartialEq)]
 enum Light {
     Off = 0,
@@ -26,19 +22,15 @@ enum Light {
 
 struct BinaryGrid {
     width: usize,
-    height: usize,
     lights: Vec<Light>,
 }
 
 struct ValueGrid {
     width: usize,
-    height: usize,
     lights: Vec<usize>,
 }
 
-
-#[derive(PartialEq)]
-#[derive(Debug)]
+#[derive(PartialEq, Debug)]
 enum CommandType {
     Off = 0,
     On = 1,
@@ -57,18 +49,12 @@ impl BinaryGrid {
         let width = w;
         let height = h;
 
-        let lights = (0..width * height)
-            .map(|_i| Light::Off)
-            .collect();
+        let lights = (0..width * height).map(|_i| Light::Off).collect();
 
-        BinaryGrid {
-            width,
-            height,
-            lights,
-        }
+        BinaryGrid { width, lights }
     }
 
-    pub fn apply_commands(&mut self, cmds: &Vec<Command>) {
+    pub fn apply_commands(&mut self, cmds: &[Command]) {
         for cmd in cmds {
             self.apply_command(cmd)
         }
@@ -92,12 +78,12 @@ impl BinaryGrid {
         match cmd.cmd_type {
             CommandType::Off => self.off(row, column),
             CommandType::On => self.on(row, column),
-            CommandType::Toggle => self.toggle(row, column)
+            CommandType::Toggle => self.toggle(row, column),
         }
     }
 
     pub fn get_index(&self, row: usize, column: usize) -> usize {
-        return row * self.width + column;
+        row * self.width + column
     }
 
     pub fn toggle(&mut self, row: usize, column: usize) {
@@ -106,7 +92,7 @@ impl BinaryGrid {
 
         let new_light = match light {
             Light::On => Light::Off,
-            Light::Off => Light::On
+            Light::Off => Light::On,
         };
 
         self.lights[idx] = new_light;
@@ -125,10 +111,7 @@ impl BinaryGrid {
     }
 
     pub fn count(&self, light: Light) -> usize {
-        self.lights
-            .iter()
-            .filter(|l| **l == light)
-            .count()
+        self.lights.iter().filter(|l| **l == light).count()
     }
 }
 
@@ -137,18 +120,12 @@ impl ValueGrid {
         let width = w;
         let height = h;
 
-        let lights: Vec<usize> = (0..width * height)
-            .map(|_i| 0)
-            .collect();
+        let lights: Vec<usize> = (0..width * height).map(|_i| 0).collect();
 
-        ValueGrid {
-            width,
-            height,
-            lights,
-        }
+        ValueGrid { width, lights }
     }
 
-    pub fn apply_commands(&mut self, cmds: &Vec<Command>) {
+    pub fn apply_commands(&mut self, cmds: &[Command]) {
         for cmd in cmds {
             self.apply_command(cmd)
         }
@@ -172,12 +149,12 @@ impl ValueGrid {
         match cmd.cmd_type {
             CommandType::Off => self.off(row, column),
             CommandType::On => self.on(row, column),
-            CommandType::Toggle => self.toggle(row, column)
+            CommandType::Toggle => self.toggle(row, column),
         }
     }
 
     pub fn get_index(&self, row: usize, column: usize) -> usize {
-        return row * self.width + column;
+        row * self.width + column
     }
 
     pub fn toggle(&mut self, row: usize, column: usize) {
@@ -203,26 +180,23 @@ impl ValueGrid {
     }
 
     pub fn birghtness(&self) -> usize {
-        self.lights
-            .iter()
-            .sum()
+        self.lights.iter().sum()
     }
 }
 
-pub fn parse_command(cmd: &String) -> Command {
+pub fn parse_command(cmd: &str) -> Command {
     let start_token = &cmd[..7];
 
     return match start_token {
         "turn on" => parse_turn_on(cmd),
         "turn of" => parse_turn_off(cmd),
         "toggle " => parse_toggle(cmd),
-        _ => panic!("Could not match command {}", cmd)
+        _ => panic!("Could not match command {}", cmd),
     };
 }
 
-
 fn parse_turn_on(cmd: &str) -> Command {
-    let tokens: Vec<&str> = cmd.split(" ").collect();
+    let tokens: Vec<&str> = cmd.split(' ').collect();
     let from = &tokens[2];
     let to = &tokens[4];
 
@@ -234,15 +208,15 @@ fn parse_turn_on(cmd: &str) -> Command {
 }
 
 fn parse_coords(coords: &str) -> (usize, usize) {
-    let split: Vec<&str> = coords.split(",").collect();
+    let split: Vec<&str> = coords.split(',').collect();
     let x = split[0].parse::<usize>().unwrap();
     let y = split[1].parse::<usize>().unwrap();
 
-    return (x, y);
+    (x, y)
 }
 
 fn parse_turn_off(cmd: &str) -> Command {
-    let tokens: Vec<&str> = cmd.split(" ").collect();
+    let tokens: Vec<&str> = cmd.split(' ').collect();
     let from = &tokens[2];
     let to = &tokens[4];
 
@@ -254,7 +228,7 @@ fn parse_turn_off(cmd: &str) -> Command {
 }
 
 fn parse_toggle(cmd: &str) -> Command {
-    let tokens: Vec<&str> = cmd.split(" ").collect();
+    let tokens: Vec<&str> = cmd.split(' ').collect();
     let from = tokens[1];
     let to = tokens[3];
 
@@ -265,10 +239,9 @@ fn parse_toggle(cmd: &str) -> Command {
     }
 }
 
-
 #[cfg(test)]
 mod tests {
-    use crate::aoc_2015::day06::{Command, CommandType, BinaryGrid, Light};
+    use crate::aoc_2015::day06::{BinaryGrid, Command, CommandType, Light};
 
     #[test]
     fn test_all_on_cmd() {
@@ -276,13 +249,17 @@ mod tests {
         let w = 1000;
         let h = 1000;
         let mut grid = BinaryGrid::new(w, h);
-        let cmd = Command { cmd_type: CommandType::On, from: (0, 0), to: (999, 999) };
+        let cmd = Command {
+            cmd_type: CommandType::On,
+            from: (0, 0),
+            to: (999, 999),
+        };
 
         // when
         grid.apply_command(&cmd);
         let count = grid.count(Light::On);
         // then
-        let expected = w*h;
+        let expected = w * h;
         assert_eq!(count, expected);
     }
 }
