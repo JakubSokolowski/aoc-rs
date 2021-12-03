@@ -26,13 +26,15 @@ pub fn life_support(input: &[String]) -> usize {
     oxygen * co2
 }
 
-pub fn get_oxygen_rating(input: &[String]) -> usize {
+pub fn get_rating(
+    input: &[String],
+    filter: fn(input: &[String], position: usize) -> Vec<String>,
+) -> usize {
     let row_length = input.iter().next().unwrap().len();
-
     let mut curr_input: Vec<String> = input.to_vec();
 
     for position in 0..row_length {
-        curr_input = filter_by_oxygen_rating(&curr_input, position);
+        curr_input = filter(&curr_input, position);
         if curr_input.len() == 1 {
             let result_vec = curr_input.get(0).unwrap();
             return usize::from_str_radix(result_vec, 2).unwrap();
@@ -42,52 +44,49 @@ pub fn get_oxygen_rating(input: &[String]) -> usize {
     0
 }
 
-pub fn filter_by_oxygen_rating(input: &[String], position: usize) -> Vec<String> {
-    let (zeros_count, ones_count) = count_at_position(input, position);
-
-    let ch_to_keep = match zeros_count.partial_cmp(&ones_count).unwrap() {
-        Ordering::Greater => '0',
-        Ordering::Less => '1',
-        Ordering::Equal => '1',
-    };
-
-    input
-        .iter()
-        .filter(|i| i.chars().nth(position).unwrap() == ch_to_keep)
-        .cloned()
-        .collect()
+pub fn get_oxygen_rating(input: &[String]) -> usize {
+    get_rating(input, filter_by_oxygen_rating)
 }
 
 pub fn get_co2_rating(input: &[String]) -> usize {
-    let row_length = input.iter().next().unwrap().len();
-    let mut curr_input: Vec<String> = input.to_vec();
-
-    for position in 0..row_length {
-        curr_input = filter_by_co2_rating(&curr_input, position);
-
-        if curr_input.len() == 1 {
-            let result_vec = curr_input.get(0).unwrap();
-            return usize::from_str_radix(result_vec, 2).unwrap();
-        }
-    }
-
-    0
+    get_rating(input, filter_by_co2_rating)
 }
 
-pub fn filter_by_co2_rating(input: &[String], position: usize) -> Vec<String> {
+pub fn filter_by_rating(
+    input: &[String],
+    position: usize,
+    ch_rating: fn(usize, usize) -> char,
+) -> Vec<String> {
     let (zeros_count, ones_count) = count_at_position(input, position);
-
-    let ch_to_keep = match zeros_count.partial_cmp(&ones_count).unwrap() {
-        Ordering::Greater => '1',
-        Ordering::Less => '0',
-        Ordering::Equal => '0',
-    };
+    let ch_to_keep = ch_rating(zeros_count, ones_count);
 
     input
         .iter()
         .filter(|i| i.chars().nth(position).unwrap() == ch_to_keep)
         .cloned()
         .collect()
+}
+
+pub fn filter_by_oxygen_rating(input: &[String], position: usize) -> Vec<String> {
+    filter_by_rating(input, position, |zeros_count, ones_count| match zeros_count
+        .partial_cmp(&ones_count)
+        .unwrap()
+    {
+        Ordering::Greater => '0',
+        Ordering::Less => '1',
+        Ordering::Equal => '1',
+    })
+}
+
+pub fn filter_by_co2_rating(input: &[String], position: usize) -> Vec<String> {
+    filter_by_rating(input, position, |zeros_count, ones_count| match zeros_count
+        .partial_cmp(&ones_count)
+        .unwrap()
+    {
+        Ordering::Greater => '1',
+        Ordering::Less => '0',
+        Ordering::Equal => '0',
+    })
 }
 
 pub fn binary_vec_to_num(vec: &[usize]) -> usize {
