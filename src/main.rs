@@ -1,6 +1,7 @@
 use std::env;
 
 mod aoc_2015;
+mod aoc_2019;
 mod aoc_2021;
 mod common;
 
@@ -32,6 +33,9 @@ fn main() {
         (2015, 12) => aoc_2015::day12::run(&read_to_string(year, day)),
         (2015, 13) => aoc_2015::day13::run(&read_to_vec(year, day)),
         (2015, 14) => aoc_2015::day14::run(&read_to_vec(year, day)),
+
+        // 2019
+        (2019, 1) => aoc_2019::day01::run(&common::data::read_to_vec(year, day)),
 
         // 2021
         (2021, 1) => aoc_2021::day01::run(&common::data::read_to_vec(year, day)),
