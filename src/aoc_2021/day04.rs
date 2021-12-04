@@ -5,36 +5,37 @@ use std::collections::HashSet;
 pub fn run(input: &str) {
     let (bingo_line, matrices) = parse(input);
 
-    play_bingo(&bingo_line, matrices.clone());
-    play_bingo_last(&bingo_line, matrices);
+    first_bingo_winner(&bingo_line, matrices.clone());
+    last_bingo_winner(&bingo_line, matrices);
 }
 
-fn play_bingo(bingo_line: &[usize], mut matrices: Vec<BingoMatrix>) {
+fn first_bingo_winner(bingo_line: &[usize], mut matrices: Vec<BingoBoard>) {
     for num in bingo_line {
         for m in matrices.iter_mut() {
             m.mark(*num);
             if m.has_bingo() {
-                println!("Found bingo: {}", m.sum_unmarked() * num);
+                println!("First winner: {}", m.sum_unmarked() * num);
                 return;
             }
         }
     }
 }
 
-fn play_bingo_last(bingo_line: &[usize], mut matrices: Vec<BingoMatrix>) {
+fn last_bingo_winner(bingo_line: &[usize], mut matrices: Vec<BingoBoard>) {
     let mut num_winners = 0;
     let num_players = matrices.len();
     let mut solved: HashSet<usize> = HashSet::new();
 
     for num in bingo_line {
-        for m in matrices.iter_mut().enumerate() {
-            m.1.mark(*num);
-            if m.1.has_bingo() && !solved.contains(&m.0) {
+        for (idx, player_matrix) in matrices.iter_mut().enumerate() {
+            player_matrix.mark(*num);
+
+            if player_matrix.has_bingo() && !solved.contains(&idx) {
                 num_winners += 1;
-                solved.insert(m.0);
-                println!("Found bingo: {}", m.1.sum_unmarked() * num);
+                solved.insert(idx);
+
                 if num_winners == num_players {
-                    println!("Last winner: {}", m.1.sum_unmarked() * num);
+                    println!("Last winner: {}", player_matrix.sum_unmarked() * num);
                     return;
                 }
             }
@@ -42,7 +43,7 @@ fn play_bingo_last(bingo_line: &[usize], mut matrices: Vec<BingoMatrix>) {
     }
 }
 
-fn parse(input: &str) -> (Vec<usize>, Vec<BingoMatrix>) {
+fn parse(input: &str) -> (Vec<usize>, Vec<BingoBoard>) {
     let bingo_line: Vec<usize> = input
         .split("\n\n")
         .next()
@@ -51,12 +52,12 @@ fn parse(input: &str) -> (Vec<usize>, Vec<BingoMatrix>) {
         .map(|n| n.parse::<usize>().unwrap())
         .collect();
 
-    let matrices: Vec<BingoMatrix> = input.split("\n\n").skip(1).map(parse_matrix).collect();
+    let matrices: Vec<BingoBoard> = input.split("\n\n").skip(1).map(parse_matrix).collect();
 
     (bingo_line, matrices)
 }
 
-fn parse_matrix(input: &str) -> BingoMatrix {
+fn parse_matrix(input: &str) -> BingoBoard {
     lazy_static! {
         static ref RE: Regex = Regex::new(r"\d+").unwrap();
     }
@@ -65,11 +66,11 @@ fn parse_matrix(input: &str) -> BingoMatrix {
         .filter_map(|digits| digits.as_str().parse().ok())
         .collect();
 
-    BingoMatrix::new(values)
+    BingoBoard::new(values)
 }
 
 #[derive(Debug, Clone)]
-struct BingoMatrix {
+struct BingoBoard {
     width: usize,
     height: usize,
     values: Vec<BingoNum>,
@@ -80,12 +81,12 @@ struct BingoNum {
     value: usize,
 }
 
-impl BingoMatrix {
-    pub fn new(values: Vec<usize>) -> BingoMatrix {
+impl BingoBoard {
+    pub fn new(values: Vec<usize>) -> BingoBoard {
         let width = (values.len() as f64).sqrt() as usize;
         let height = width;
 
-        BingoMatrix {
+        BingoBoard {
             width,
             height,
             values: values
@@ -163,11 +164,11 @@ mod tests {
     fn test_mark_marks_value_as_bingoed() {
         // given
         let values = vec![1, 2, 3, 4, 5, 6, 7, 8, 9];
-        let mut bingo_matrix = BingoMatrix::new(values);
+        let mut board = BingoBoard::new(values);
 
         // when
-        bingo_matrix.mark(3);
-        let result = bingo_matrix.get_value(0, 2);
+        board.mark(3);
+        let result = board.get_value(0, 2);
 
         // then
         let expected = BingoNum {
@@ -181,14 +182,14 @@ mod tests {
     fn any_row_has_bingo_returns_returns_true_if_all_nums_in_some_row_are_marked() {
         // given
         let values = vec![1, 2, 3, 4, 5, 6, 7, 8, 9];
-        let mut bingo_matrix = BingoMatrix::new(values);
+        let mut board = BingoBoard::new(values);
 
         // when
-        bingo_matrix.mark(4);
-        bingo_matrix.mark(5);
-        bingo_matrix.mark(6);
-        let row_bingo = bingo_matrix.any_row_has_bingo();
-        let column_bingo = bingo_matrix.any_column_has_bingo();
+        board.mark(4);
+        board.mark(5);
+        board.mark(6);
+        let row_bingo = board.any_row_has_bingo();
+        let column_bingo = board.any_column_has_bingo();
 
         // then
         let expected_row = true;
@@ -201,14 +202,14 @@ mod tests {
     fn any_row_has_bingo_returns_returns_true_if_all_nums_in_some_column_are_marked() {
         // given
         let values = vec![1, 2, 3, 4, 5, 6, 7, 8, 9];
-        let mut bingo_matrix = BingoMatrix::new(values);
+        let mut board = BingoBoard::new(values);
 
         // when
-        bingo_matrix.mark(3);
-        bingo_matrix.mark(6);
-        bingo_matrix.mark(9);
-        let row_bingo = bingo_matrix.any_row_has_bingo();
-        let column_bingo = bingo_matrix.any_column_has_bingo();
+        board.mark(3);
+        board.mark(6);
+        board.mark(9);
+        let row_bingo = board.any_row_has_bingo();
+        let column_bingo = board.any_column_has_bingo();
 
         // then
         let expected_row = false;
