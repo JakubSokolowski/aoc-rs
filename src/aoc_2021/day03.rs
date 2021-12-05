@@ -138,10 +138,7 @@ pub fn most_common_at_position(input: &[String], position: usize) -> usize {
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    macro_rules! vec_of_strings {
-        ($($x:expr),*) => (vec![$($x.to_string()),*]);
-    }
+    use crate::common::parse::test_utils::vec_of_strings;
 
     #[test]
     fn test_most_common_at_position() {
