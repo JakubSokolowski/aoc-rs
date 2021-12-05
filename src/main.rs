@@ -38,6 +38,7 @@ fn main() {
         (2021, 2) => aoc_2021::day02::run(&common::data::read_to_vec(year, day)),
         (2021, 3) => aoc_2021::day03::run(&common::data::read_to_vec(year, day)),
         (2021, 4) => aoc_2021::day04::run(&common::data::read_to_string(year, day)),
+        (2021, 5) => aoc_2021::day05::run(&common::data::read_to_vec(year, day)),
 
         (_, _) => panic!("Not implemented"),
     }
