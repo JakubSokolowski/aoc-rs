@@ -1,5 +1,4 @@
-use lazy_static::lazy_static;
-use regex::Regex;
+use crate::common::parse::parse_numbers;
 use std::collections::HashSet;
 
 pub fn run(input: &str) {
@@ -9,7 +8,7 @@ pub fn run(input: &str) {
     last_bingo_winner(&bingo_line, matrices);
 }
 
-fn first_bingo_winner(bingo_line: &[usize], mut matrices: Vec<BingoBoard>) {
+fn first_bingo_winner(bingo_line: &[i64], mut matrices: Vec<BingoBoard>) {
     for num in bingo_line {
         for m in matrices.iter_mut() {
             m.mark(*num);
@@ -21,18 +20,18 @@ fn first_bingo_winner(bingo_line: &[usize], mut matrices: Vec<BingoBoard>) {
     }
 }
 
-fn last_bingo_winner(bingo_line: &[usize], mut matrices: Vec<BingoBoard>) {
+fn last_bingo_winner(bingo_line: &[i64], mut matrices: Vec<BingoBoard>) {
     let mut num_winners = 0;
     let num_players = matrices.len();
-    let mut solved: HashSet<usize> = HashSet::new();
+    let mut solved: HashSet<i64> = HashSet::new();
 
     for num in bingo_line {
         for (idx, player_matrix) in matrices.iter_mut().enumerate() {
             player_matrix.mark(*num);
 
-            if player_matrix.has_bingo() && !solved.contains(&idx) {
+            if player_matrix.has_bingo() && !solved.contains(&(idx as i64)) {
                 num_winners += 1;
-                solved.insert(idx);
+                solved.insert(idx as i64);
 
                 if num_winners == num_players {
                     println!("Last winner: {}", player_matrix.sum_unmarked() * num);
@@ -43,13 +42,13 @@ fn last_bingo_winner(bingo_line: &[usize], mut matrices: Vec<BingoBoard>) {
     }
 }
 
-fn parse(input: &str) -> (Vec<usize>, Vec<BingoBoard>) {
-    let bingo_line: Vec<usize> = input
+fn parse(input: &str) -> (Vec<i64>, Vec<BingoBoard>) {
+    let bingo_line: Vec<i64> = input
         .split("\n\n")
         .next()
         .unwrap()
         .split(',')
-        .map(|n| n.parse::<usize>().unwrap())
+        .map(|n| n.parse::<i64>().unwrap())
         .collect();
 
     let matrices: Vec<BingoBoard> = input.split("\n\n").skip(1).map(parse_matrix).collect();
@@ -58,32 +57,25 @@ fn parse(input: &str) -> (Vec<usize>, Vec<BingoBoard>) {
 }
 
 fn parse_matrix(input: &str) -> BingoBoard {
-    lazy_static! {
-        static ref RE: Regex = Regex::new(r"\d+").unwrap();
-    }
-    let values: Vec<usize> = RE
-        .find_iter(input)
-        .filter_map(|digits| digits.as_str().parse().ok())
-        .collect();
-
+    let values = parse_numbers(input);
     BingoBoard::new(values)
 }
 
 #[derive(Debug, Clone)]
 struct BingoBoard {
-    width: usize,
-    height: usize,
+    width: i64,
+    height: i64,
     values: Vec<BingoNum>,
 }
 #[derive(Debug, Clone, Copy, PartialEq)]
 struct BingoNum {
     marked: bool,
-    value: usize,
+    value: i64,
 }
 
 impl BingoBoard {
-    pub fn new(values: Vec<usize>) -> BingoBoard {
-        let width = (values.len() as f64).sqrt() as usize;
+    pub fn new(values: Vec<i64>) -> BingoBoard {
+        let width = (values.len() as f64).sqrt() as i64;
         let height = width;
 
         BingoBoard {
@@ -99,12 +91,12 @@ impl BingoBoard {
         }
     }
 
-    fn get_index(&self, row: usize, column: usize) -> usize {
+    fn get_index(&self, row: i64, column: i64) -> i64 {
         row * self.width + column
     }
 
-    fn get_value(&self, row: usize, column: usize) -> BingoNum {
-        match self.values.get(self.get_index(row, column)) {
+    fn get_value(&self, row: i64, column: i64) -> BingoNum {
+        match self.values.get(self.get_index(row, column) as usize) {
             Some(v) => *v,
             None => BingoNum {
                 value: 0,
@@ -113,7 +105,7 @@ impl BingoBoard {
         }
     }
 
-    fn mark(&mut self, number: usize) {
+    fn mark(&mut self, number: i64) {
         match self.values.iter().position(|n| n.value == number) {
             None => {}
             Some(index) => self.values.get_mut(index).unwrap().marked = true,
@@ -126,7 +118,7 @@ impl BingoBoard {
             .any(|bingo| bingo)
     }
 
-    fn column_has_bingo(&self, column: usize) -> bool {
+    fn column_has_bingo(&self, column: i64) -> bool {
         (0..self.height)
             .map(|row| self.get_value(row, column))
             .all(|n| n.marked)
@@ -138,7 +130,7 @@ impl BingoBoard {
             .any(|bingo| bingo)
     }
 
-    fn row_has_bingo(&self, row: usize) -> bool {
+    fn row_has_bingo(&self, row: i64) -> bool {
         (0..self.width)
             .map(|column| self.get_value(row, column))
             .all(|n| n.marked)
@@ -148,7 +140,7 @@ impl BingoBoard {
         self.any_row_has_bingo() || self.any_column_has_bingo()
     }
 
-    fn sum_unmarked(&self) -> usize {
+    fn sum_unmarked(&self) -> i64 {
         self.values
             .iter()
             .filter_map(|&n| if !n.marked { Some(n.value) } else { None })

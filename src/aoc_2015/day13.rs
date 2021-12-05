@@ -5,12 +5,12 @@ use std::collections::HashMap;
 pub struct Happiness {
     from: String,
     to: String,
-    delta: i32,
+    delta: i64,
 }
 
 pub struct AsymmetricHappinessMatrix {
     name_lookup: HashMap<String, usize>,
-    matrix: Vec<Vec<i32>>,
+    matrix: Vec<Vec<i64>>,
     cities: Vec<String>,
 }
 
@@ -25,7 +25,7 @@ impl AsymmetricHappinessMatrix {
             .collect();
 
         let matrix_size = guests.len();
-        let mut matrix: Vec<Vec<i32>> = vec![vec![0; matrix_size]; matrix_size];
+        let mut matrix: Vec<Vec<i64>> = vec![vec![0; matrix_size]; matrix_size];
 
         for distance in &distances {
             let from_idx = *name_lookup.get(&distance.from).unwrap();
@@ -52,26 +52,26 @@ impl AsymmetricHappinessMatrix {
             .collect()
     }
 
-    fn happiness(&self, from: usize, to: usize) -> i32 {
+    fn happiness(&self, from: usize, to: usize) -> i64 {
         self.matrix[from][to]
     }
 
-    fn happiness_guests(&self, from: &str, to: &str) -> i32 {
+    fn happiness_guests(&self, from: &str, to: &str) -> i64 {
         self.happiness(
             *self.name_lookup.get(from).unwrap(),
             *self.name_lookup.get(to).unwrap(),
         )
     }
 
-    fn get_seating_delta(&self, cities: Vec<&str>) -> i32 {
-        let in_line: i32 = cities
+    fn get_seating_delta(&self, cities: Vec<&str>) -> i64 {
+        let in_line: i64 = cities
             .windows(2)
             .map(|pair| {
                 self.happiness_guests(pair[0], pair[1]) + self.happiness_guests(pair[1], pair[0])
             })
             .sum();
 
-        let close: i32 = self.happiness_guests(cities.last().unwrap(), cities.first().unwrap())
+        let close: i64 = self.happiness_guests(cities.last().unwrap(), cities.first().unwrap())
             + self.happiness_guests(cities.first().unwrap(), cities.last().unwrap());
 
         in_line + close
@@ -107,12 +107,12 @@ fn parse_input(input: &[String]) -> Vec<Happiness> {
             let from = tokens[0].to_string();
             let to = tokens[10].to_string().replace(".", "");
 
-            let multiplier: i32 = match tokens[2] {
+            let multiplier: i64 = match tokens[2] {
                 "gain" => 1,
                 "lose" => -1,
                 _ => panic!("Invalid delta"),
             };
-            let delta = tokens[3].parse::<i32>().unwrap() * multiplier;
+            let delta = tokens[3].parse::<i64>().unwrap() * multiplier;
             Happiness { from, to, delta }
         })
         .collect()

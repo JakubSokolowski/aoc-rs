@@ -10,7 +10,7 @@ pub mod test_utils {
     #[allow(clippy::all)]
     pub(crate) use vec_of_strings;
 }
-pub fn parse_numbers(input: &str) -> Vec<i32> {
+pub fn parse_numbers(input: &str) -> Vec<i64> {
     lazy_static! {
         static ref RE: Regex = Regex::new(r"\d+").unwrap();
     }
