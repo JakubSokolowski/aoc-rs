@@ -2,10 +2,10 @@ use crate::common::parse::parse_numbers;
 
 #[derive(Debug, Clone)]
 pub struct Line {
-    start_x: i32,
-    start_y: i32,
-    end_x: i32,
-    end_y: i32,
+    start_x: i64,
+    start_y: i64,
+    end_x: i64,
+    end_y: i64,
 }
 
 impl Line {
@@ -17,45 +17,45 @@ impl Line {
         self.start_x == self.end_x
     }
 
-    fn max_x(&self) -> i32 {
+    fn max_x(&self) -> i64 {
         self.start_x.max(self.end_x)
     }
 
-    fn max_y(&self) -> i32 {
+    fn max_y(&self) -> i64 {
         self.start_y.max(self.end_y)
     }
 
-    fn delta_x(&self) -> i32 {
+    fn delta_x(&self) -> i64 {
         self.end_x - self.start_x
     }
 
-    fn delta_y(&self) -> i32 {
+    fn delta_y(&self) -> i64 {
         self.end_y - self.start_y
     }
 
-    fn length(&self) -> i32 {
-        i32::max(self.delta_x().abs(), self.delta_y().abs())
+    fn length(&self) -> i64 {
+        i64::max(self.delta_x().abs(), self.delta_y().abs())
     }
 }
 
 #[derive(Debug, Clone)]
 struct Grid {
-    width: i32,
-    values: Vec<i32>,
+    width: i64,
+    values: Vec<i64>,
 }
 
 impl Grid {
-    pub fn new(width: i32, height: i32) -> Grid {
+    pub fn new(width: i64, height: i64) -> Grid {
         let values = vec![0; (width * height) as usize];
 
         Grid { width, values }
     }
 
-    fn get_index(&self, x: i32, y: i32) -> i32 {
+    fn get_index(&self, x: i64, y: i64) -> i64 {
         y * self.width + x
     }
 
-    fn inc_value(&mut self, row: i32, column: i32) {
+    fn inc_value(&mut self, row: i64, column: i64) {
         let index = self.get_index(row, column);
         self.values[index as usize] += 1
     }
@@ -78,8 +78,8 @@ impl Grid {
         }
     }
 
-    fn count_overlapping(&self) -> i32 {
-        self.values.iter().filter(|&&v| v > 1).count() as i32
+    fn count_overlapping(&self) -> i64 {
+        self.values.iter().filter(|&&v| v > 1).count() as i64
     }
 }
 
@@ -95,12 +95,12 @@ fn parse_line(input: &str) -> Line {
 
 pub fn run(input: &[String]) {
     let count = count_overlapping(input);
-    println!("Num overlapping lines: {}", count);
+    println!("Num overlapping points: {}", count);
     let count2 = count_overlapping_with_diagonal(input);
-    println!("Num overlapping lines: {}", count2)
+    println!("Num overlapping points: {}", count2)
 }
 
-pub fn count_overlapping(input: &[String]) -> i32 {
+pub fn count_overlapping(input: &[String]) -> i64 {
     let lines: Vec<_> = input
         .iter()
         .map(|l| parse_line(l))
@@ -109,19 +109,19 @@ pub fn count_overlapping(input: &[String]) -> i32 {
     count_overlapping_points(&lines)
 }
 
-pub fn count_overlapping_points(lines: &[Line]) -> i32 {
+pub fn count_overlapping_points(lines: &[Line]) -> i64 {
     let (width, height) = max_coords(lines);
     let mut grid = Grid::new(width + 1, height + 1);
     grid.draw_lines(lines);
     grid.count_overlapping()
 }
 
-pub fn count_overlapping_with_diagonal(input: &[String]) -> i32 {
+pub fn count_overlapping_with_diagonal(input: &[String]) -> i64 {
     let lines: Vec<_> = input.iter().map(|l| parse_line(l)).collect();
     count_overlapping_points(&lines)
 }
 
-pub fn max_coords(lines: &[Line]) -> (i32, i32) {
+pub fn max_coords(lines: &[Line]) -> (i64, i64) {
     let mut max_x = 0;
     let mut max_y = 0;
 

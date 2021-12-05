@@ -1,7 +1,7 @@
 #[derive(PartialEq, Debug)]
 pub struct SubmarineCommand {
     command_type: SubmarineCommandType,
-    value: i32,
+    value: i64,
 }
 
 #[derive(PartialEq, Debug)]
@@ -11,11 +11,11 @@ pub enum SubmarineCommandType {
     Down = 2,
 }
 
-fn total_area(commands: &[SubmarineCommand]) -> i32 {
+fn total_area(commands: &[SubmarineCommand]) -> i64 {
     total_x(commands) * total_y(commands)
 }
 
-fn total_x(commands: &[SubmarineCommand]) -> i32 {
+fn total_x(commands: &[SubmarineCommand]) -> i64 {
     commands
         .iter()
         .filter(|c| c.command_type == SubmarineCommandType::Forward)
@@ -23,7 +23,7 @@ fn total_x(commands: &[SubmarineCommand]) -> i32 {
         .sum()
 }
 
-fn total_y(commands: &[SubmarineCommand]) -> i32 {
+fn total_y(commands: &[SubmarineCommand]) -> i64 {
     commands
         .iter()
         .filter(|c| c.command_type != SubmarineCommandType::Forward)
@@ -37,10 +37,10 @@ fn total_y(commands: &[SubmarineCommand]) -> i32 {
         .sum()
 }
 
-fn total_aim_area(commands: &[SubmarineCommand]) -> i32 {
-    let mut aim = 0_i32;
-    let mut total_x = 0_i32;
-    let mut total_y = 0_i32;
+fn total_aim_area(commands: &[SubmarineCommand]) -> i64 {
+    let mut aim = 0_i64;
+    let mut total_x = 0_i64;
+    let mut total_y = 0_i64;
 
     for cmd in commands {
         match cmd.command_type {
@@ -64,7 +64,7 @@ pub fn parse_command(cmd: &str) -> SubmarineCommand {
     let tokens: Vec<&str> = cmd.split(' ').collect();
     let command_str = tokens[0];
     let value_str = tokens[1];
-    let value = value_str.parse::<i32>().unwrap();
+    let value = value_str.parse::<i64>().unwrap();
 
     let command_type = match command_str {
         "forward" => SubmarineCommandType::Forward,

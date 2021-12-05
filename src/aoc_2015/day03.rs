@@ -9,7 +9,7 @@ pub fn run(input: &str) {
 }
 
 pub fn count_multiple_presents(input: &str) -> u32 {
-    let mut houses: HashMap<House, i32> = HashMap::new();
+    let mut houses: HashMap<House, i64> = HashMap::new();
     let start = House::new(0, 0);
     houses.insert(start, 1);
 
@@ -25,7 +25,7 @@ pub fn count_multiple_presents(input: &str) -> u32 {
 }
 
 pub fn count_multiple_presents_with_robot(input: &str) -> u32 {
-    let mut houses: HashMap<House, i32> = HashMap::new();
+    let mut houses: HashMap<House, i64> = HashMap::new();
     let start = House::new(0, 0);
 
     houses.insert(start, 2);
@@ -50,8 +50,8 @@ pub fn count_multiple_presents_with_robot(input: &str) -> u32 {
 
 #[derive(Hash, Eq, PartialEq, Debug, Copy, Clone)]
 pub struct House {
-    x: i32,
-    y: i32,
+    x: i64,
+    y: i64,
 }
 
 pub trait VisitNext {
@@ -59,7 +59,7 @@ pub trait VisitNext {
 }
 
 impl House {
-    fn new(x: i32, y: i32) -> House {
+    fn new(x: i64, y: i64) -> House {
         House { x, y }
     }
 
