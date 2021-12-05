@@ -36,7 +36,8 @@ fn main() {
         (2015, 14) => aoc_2015::day14::run(&read_to_vec(year, day, bigboy)),
 
         // 2019
-        (2019, 1) => aoc_2019::day01::run(&common::data::read_to_vec(year, day)),
+        (2019, 1) => aoc_2019::day01::run(&common::data::read_to_vec(year, day, bigboy)),
+        (2019, 2) => aoc_2019::day02::run(&common::data::read_to_string(year, day, bigboy)),
 
         // 2021
         (2021, 1) => aoc_2021::day01::run(&common::data::read_to_vec(year, day, bigboy)),
