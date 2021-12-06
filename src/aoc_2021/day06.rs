@@ -84,26 +84,8 @@ fn population_size_v2(input: &str, num_days: i64) -> i64 {
     }
 
     for _ in 0..num_days {
-        let mut new_groups = groups.clone();
-
-        let mut spawned = 0_i64;
-        for (idx, fish_count) in groups.iter_mut().enumerate() {
-            match idx {
-                1..=8 => new_groups[idx - 1] = *fish_count,
-                0 => {
-                    spawned = *fish_count;
-                }
-                _ => {
-                    panic!("Should not happen");
-                }
-            }
-            new_groups[idx] = 0;
-        }
-
-        new_groups[8] += spawned;
-        new_groups[6] += spawned;
-
-        groups = new_groups;
+        groups[7] += groups[0];
+        groups.rotate_left(1);
     }
 
     groups.iter().sum()
