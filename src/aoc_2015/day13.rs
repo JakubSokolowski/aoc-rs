@@ -105,7 +105,7 @@ fn parse_input(input: &[String]) -> Vec<Happiness> {
         .map(|line| {
             let tokens: Vec<&str> = line.split(' ').collect();
             let from = tokens[0].to_string();
-            let to = tokens[10].to_string().replace(".", "");
+            let to = tokens[10].to_string().replace('.', "");
 
             let multiplier: i64 = match tokens[2] {
                 "gain" => 1,
