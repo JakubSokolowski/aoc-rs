@@ -1,4 +1,6 @@
 use std::collections::HashSet;
+use std::fmt;
+use std::fmt::Formatter;
 use std::iter::FromIterator;
 
 #[derive(Hash, Eq, PartialEq, Debug, Copy, Clone)]
@@ -103,8 +105,11 @@ impl Paper {
     fn max_column(&self) -> usize {
         self.points.iter().map(|p| p.column).max().unwrap()
     }
+}
 
-    fn print(&self) {
+impl fmt::Display for Paper {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        let mut display_str = "".to_string();
         for row in 0..=self.max_row() {
             let mut line = "".to_string();
             for column in 0..=self.max_column() {
@@ -114,8 +119,10 @@ impl Paper {
                     line += "  "
                 }
             }
-            println!("{}", line);
+            display_str += &*format!("{}\n", line);
         }
+
+        write!(f, "{}", display_str)
     }
 }
 
@@ -130,7 +137,7 @@ fn code(input: &str) {
     for fold in &folds {
         paper.apply_fold(fold);
     }
-    paper.print()
+    println!("{}", paper);
 }
 
 fn parse_input(input: &str) -> (Paper, Vec<Fold>) {
