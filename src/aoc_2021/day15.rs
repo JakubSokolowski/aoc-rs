@@ -228,12 +228,12 @@ pub fn run(input: &[String]) {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use crate::common::parse::test_utils::vec_of_strings;
 
-    #[test]
-    fn test_risk_1() {
-        let input = vec_of_strings![
+    use super::*;
+
+    fn mock_input() -> Vec<String> {
+        vec_of_strings![
             "1163751742",
             "1381373672",
             "2136511328",
@@ -244,31 +244,20 @@ mod tests {
             "3125421639",
             "1293138521",
             "2311944581"
-        ];
+        ]
+    }
 
+    #[test]
+    fn test_risk_1() {
+        let input = mock_input();
         let mat = parse_input(&input);
-
-        let start = Point { row: 0, column: 0 };
-        let end = Point { row: 9, column: 9 };
-        let risk = mat.find_risk(start, end);
+        let risk = mat.tl_br_risk();
         assert_eq!(risk, 40);
     }
 
     #[test]
-    fn test_risk_extended_1() {
-        let input = vec_of_strings![
-            "1163751742",
-            "1381373672",
-            "2136511328",
-            "3694931569",
-            "7463417111",
-            "1319128137",
-            "1359912421",
-            "3125421639",
-            "1293138521",
-            "2311944581"
-        ];
-
+    fn test_risk_extended() {
+        let input = mock_input();
         let mat = parse_extended(&input);
         let risk = mat.tl_br_risk();
         assert_eq!(risk, 315);

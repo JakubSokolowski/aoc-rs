@@ -90,10 +90,8 @@ pub fn run(input: &[String]) {
 mod tests {
     use super::*;
 
-    #[test]
-    fn test_total_area_returns_product_of_total_x_and_y() {
-        // given
-        let commands = vec![
+    fn mock_commands() -> Vec<SubmarineCommand> {
+        vec![
             SubmarineCommand {
                 command_type: SubmarineCommandType::Forward,
                 value: 5,
@@ -118,7 +116,13 @@ mod tests {
                 command_type: SubmarineCommandType::Forward,
                 value: 2,
             },
-        ];
+        ]
+    }
+
+    #[test]
+    fn test_total_area_returns_product_of_total_x_and_y() {
+        // given
+        let commands = mock_commands();
 
         // when
         let result = total_area(&commands);
@@ -131,32 +135,7 @@ mod tests {
     #[test]
     fn test_total_aim_area_returns_product_of_total_x_and_y() {
         // given
-        let commands = vec![
-            SubmarineCommand {
-                command_type: SubmarineCommandType::Forward,
-                value: 5,
-            },
-            SubmarineCommand {
-                command_type: SubmarineCommandType::Down,
-                value: 5,
-            },
-            SubmarineCommand {
-                command_type: SubmarineCommandType::Forward,
-                value: 8,
-            },
-            SubmarineCommand {
-                command_type: SubmarineCommandType::Up,
-                value: 3,
-            },
-            SubmarineCommand {
-                command_type: SubmarineCommandType::Down,
-                value: 8,
-            },
-            SubmarineCommand {
-                command_type: SubmarineCommandType::Forward,
-                value: 2,
-            },
-        ];
+        let commands = mock_commands();
 
         // when
         let result = total_aim_area(&commands);
