@@ -1,10 +1,10 @@
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq, Eq, Debug)]
 pub struct SubmarineCommand {
     command_type: SubmarineCommandType,
     value: i64,
 }
 
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq, Eq, Debug)]
 pub enum SubmarineCommandType {
     Forward = 0,
     Up = 1,
