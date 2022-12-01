@@ -3,6 +3,7 @@ use std::env;
 mod aoc_2015;
 mod aoc_2019;
 mod aoc_2021;
+mod aoc_2022;
 mod common;
 
 use crate::common::data::{read_to_string, read_to_vec};
@@ -58,6 +59,9 @@ fn main() {
         (2021, 16) => aoc_2021::day16::run(&common::data::read_to_string(year, day, bigboy)),
         (2021, 17) => aoc_2021::day17::run(&common::data::read_to_string(year, day, bigboy)),
         (2021, 18) => aoc_2021::day18::run(&common::data::read_to_vec(year, day, bigboy)),
+
+        // 2022
+        (2022, 1) => aoc_2022::day01::run(&common::data::read_to_vec(year, day, bigboy)),
 
         (_, _) => panic!("Not implemented"),
     }

@@ -91,18 +91,18 @@ impl SignalSolver {
 }
 
 pub fn double_op_bitwise(op: &str, op1: u16, op2: u16) -> u16 {
-    return match op {
+    match op {
         "AND" => op1 & op2,
         "OR" => op1 | op2,
         "RSHIFT" => op1 >> op2,
         "LSHIFT" => op1 << op2,
         _ => panic!("Invalid operation: {}", op),
-    };
+    }
 }
 
 pub fn single_op_bitwise(op: &str, op1: u16) -> u16 {
-    return match op {
+    match op {
         "NOT" => !op1,
         _ => panic!("Invalid operation: {}", op),
-    };
+    }
 }

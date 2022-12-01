@@ -61,7 +61,7 @@ fn parse_fish(input: &str) -> Vec<LanternFish> {
     parse_numbers(input)
         .iter()
         .map(|n| LanternFish {
-            days_left: *n as i64,
+            days_left: *n,
             days_to_spawn: DEFAULT_DAYS_TO_SPAWN,
         })
         .collect()

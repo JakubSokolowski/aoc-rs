@@ -72,7 +72,7 @@ pub fn run_program(mut program: Vec<i64>) -> i64 {
         opcode_position += 4
     }
 
-    *program.get(0).unwrap()
+    *program.first().unwrap()
 }
 
 #[cfg(test)]

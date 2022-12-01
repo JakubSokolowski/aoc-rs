@@ -107,14 +107,14 @@ fn left_part(num: &str, pair: PairInfo, start: usize) -> (String, String) {
         .chars()
         .rev()
         .skip(num.len() - start)
-        .take_while(|c| !c.is_digit(10))
+        .take_while(|c| !c.is_ascii_digit())
         .collect::<String>();
 
     let num_str = num
         .chars()
         .rev()
         .skip(num.len() - start + part.len())
-        .take_while(|c| c.is_digit(10))
+        .take_while(|c| c.is_ascii_digit())
         .collect::<String>();
 
     let rev_part: String = part.chars().rev().collect();
@@ -134,13 +134,13 @@ fn right_part(num: &str, pair: PairInfo, end: usize) -> (String, String) {
     let part = num
         .chars()
         .skip(end)
-        .take_while(|c| !c.is_digit(10))
+        .take_while(|c| !c.is_ascii_digit())
         .collect::<String>();
     // println!("Part: {}", part);
     let num_str = num
         .chars()
         .skip(end + part.len())
-        .take_while(|c| c.is_digit(10))
+        .take_while(|c| c.is_ascii_digit())
         .collect::<String>();
     let num: i32 = num_str.parse().unwrap();
     let after = format!("{}{}", &part[1..], num + pair.right);
@@ -204,7 +204,7 @@ fn can_split(num: &str) -> bool {
 fn find_split(num: &str) -> Option<i32> {
     let mut digits = "".to_string();
     for c in num.chars() {
-        if c.is_digit(10) {
+        if c.is_ascii_digit() {
             digits.push_str(&c.to_string())
         } else {
             digits = "".to_string();

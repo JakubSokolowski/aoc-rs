@@ -69,7 +69,7 @@ impl BinaryGrid {
 
         for x in start_row..=end_row {
             for y in start_column..=end_column {
-                self.apply_to_coord(x as usize, y as usize, cmd);
+                self.apply_to_coord(x, y, cmd);
             }
         }
     }
@@ -140,7 +140,7 @@ impl ValueGrid {
 
         for x in start_row..=end_row {
             for y in start_column..=end_column {
-                self.apply_to_coord(x as usize, y as usize, cmd);
+                self.apply_to_coord(x, y, cmd);
             }
         }
     }
@@ -187,12 +187,12 @@ impl ValueGrid {
 pub fn parse_command(cmd: &str) -> Command {
     let start_token = &cmd[..7];
 
-    return match start_token {
+    match start_token {
         "turn on" => parse_turn_on(cmd),
         "turn of" => parse_turn_off(cmd),
         "toggle " => parse_toggle(cmd),
         _ => panic!("Could not match command {}", cmd),
-    };
+    }
 }
 
 fn parse_turn_on(cmd: &str) -> Command {
