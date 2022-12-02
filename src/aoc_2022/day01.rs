@@ -33,3 +33,7 @@ pub fn top_3_sum(input: &[String]) -> i64 {
         .take(3)
         .sum()
 }
+
+mod tests {
+    use super::*;
+}
